@@ -1,0 +1,198 @@
+#!php
+<?php
+echo "\n
+________________________________________________________
+                      __
+    /               /    )         ,
+---/----__----__----\--------__----------__----__---)__-
+  /   /   ) /   )    \     /   ) /     /   ) /___) /   )
+_/___(___/_(___/_(____/___/___/_/_____/___/_(___ _/_____
+              /                      /
+          (_ /                      /        Beta - v0.1
+          Dashboard Finder
+________________________________________________________
+\n";
+
+@$url = getopt(null, ["url:"])['url'];
+if ($url == "" || empty($url)) {
+  echo "you must add the --url= ,,example  `php logSniper --url=google.com` ";
+  exit;
+}
+/**
+ * PHP/cURL function to check a web site status. If HTTP status is not 200 or 302, or
+ * the requests takes longer than 10 seconds, the website is unreachable.
+ *
+ * Follow me on Twitter: @HertogJanR
+ * Send your donation through https://www.paypal.me/jreilink. Thanks!
+ *
+ * @param string $url URL that must be checked
+ */
+function url_test( $url ) {
+  $timeout = 10;
+  $ch = curl_init();
+  curl_setopt ( $ch, CURLOPT_URL, $url );
+  curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, 1 );
+  curl_setopt ( $ch, CURLOPT_TIMEOUT, $timeout );
+  curl_setopt ( $ch, CURLOPT_SSL_VERIFYPEER, true);
+  curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+
+
+  $http_respond = curl_exec($ch);
+  $http_respond = trim( strip_tags( $http_respond ) );
+  $http_code = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
+  if ( ( $http_code == "200" ) || ( $http_code == "302" ) ) {
+    return true;
+  } else {
+    // return $http_code;, possible too
+    return false;
+  }
+  curl_close( $ch );
+}
+
+$testNames = 'acct_login/
+acesso/
+adimin/
+adiministrador/
+adm/
+login/
+adm/admin/
+admin/
+admin4_account/
+admin4_colon/
+admin/adm/
+admin/admin/
+admin/admin_login.php
+admin_area/
+admin.html
+administer/
+administracao/
+administratoraccounts/
+administrators/
+admin.php
+adminpro/
+AdminTools/
+autologin/
+banneradmin/
+bbadmin/
+bigadmin/
+blogindex/
+cadmins/
+ccp14admin/
+cmsadmin/
+config/
+controle/
+cpanel/
+cpanel_file/
+customer_login/
+database_administration/
+directadmin/
+dir-login/
+donos/
+edit/
+entrar
+entrar.html
+entrar.php
+ezsqliteadmin/
+formslogin/
+funcoes/
+globes_admin/
+hpwebjetadmin/
+Indy_admin/
+irc-macadmin/
+key/
+LiveUser_Admin/
+logar/
+login.php
+login/
+login1/
+login_db/
+loginflat/
+login.html
+login.php
+login-redirect/
+login-us/
+loginuser/
+loginusuarios/
+logo_sysadmin/
+logout/
+Lotus_Domino_Admin/
+macadmin/
+manuallogin/
+members/
+membros/
+memlogin/
+meta_login/
+navSiteAdmin/
+net/
+newsadmin/
+not/
+openvpnadmin/
+painel/
+paineldecontrole/
+panel/
+pc/
+pdc/
+pgadmin/
+php/
+phpldapadmin/
+phppgadmin/
+phpSQLiteAdmin/
+platz_login/
+power_user/
+project-admins/
+pureadmin/
+radmind/
+radmind-1/
+rcLogin/
+saff/
+senha/
+senha/
+senhas/
+server/
+ServerAdministrator/
+server_admin_small/
+sff/
+showlogin/
+simpleLogin/
+sistema/
+smblogin/
+sql-admin/
+sshadmin/
+ss_vms_admin_sm/
+staradmin/
+sub-login/
+Super-Admin/
+support_login/
+sys-admin/
+SysAdmin/
+SysAdmin2/
+system_administration/
+typo3/
+userlogin/
+UserLogin/
+usuarios/
+utility_login/
+vadmind/
+vmailadmin/
+wizmysqladmin/
+wp-login.php/
+wp-admin/
+xlogin/
+dash/';
+$names = $your_array = explode("\n", $testNames);
+
+
+foreach ($names as $key => $name) {
+  $my_url = $url.'/'.$name;
+
+  if (url_test($my_url)) {
+    echo "\033[7m".'[FOUND]:: ----------------------'."\n\n\n";
+    echo '[FOUND]:: <==> :: '. $my_url."\n\n\n";
+    echo '[FOUND]:: ----------------------'."\n\n\n";
+    exit;
+  }else {
+   echo '['.($key+1).']'.'[not found]:: <> :: '. $my_url."\n\n\n";
+  }
+}
+
+?>
