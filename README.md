@@ -1,5 +1,5 @@
 # logSniper
-A fast and powerful dashboard (admin page,login) finder
+A fast and powerful dashboard (admin,login page) finder
 
 ## To install logSniper in Kali Linux:
 
