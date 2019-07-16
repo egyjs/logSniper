@@ -1,5 +1,6 @@
 #!php
 <?php
+#v1.2
 echo "\n
 ________________________________________________________
                       __
@@ -8,15 +9,22 @@ ________________________________________________________
   /   /   ) /   )    \     /   ) /     /   ) /___) /   )
 _/___(___/_(___/_(____/___/___/_/_____/___/_(___ _/_____
               /                      /
-          (_ /                      /        Beta - v1.1
+          (_ /                      /        Beta - v1.2
           Dashboard Finder
 ________________________________________________________
 \n";
 
+
 @$url = getopt(null, ["url:"])['url'];
+@$go = getopt(null, ["go"])['go'];
+
+if (isset($go)){
+    echo "on the GO \n";
+}
 if ($url == "" || empty($url)) {
-  echo "you must add the --url= ,,example  `php logSniper --url=google.com` ";
-  exit;
+    echo "you must add the --url= ,,example  `php logSniper --url=google.com` \n";
+    echo "if you need to continue search after found use -go ,,example  `php logSniper --url=google.com -go ` \n";
+    exit;
 }
 /**
  * PHP/cURL function to check a web site status. If HTTP status is not 200 or 302, or
@@ -28,170 +36,174 @@ if ($url == "" || empty($url)) {
  * @param string $url URL that must be checked
  */
 function url_test( $url ) {
-  $timeout = 10;
-  $ch = curl_init();
-  curl_setopt ( $ch, CURLOPT_URL, $url );
-  curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, 1 );
-  curl_setopt ( $ch, CURLOPT_TIMEOUT, $timeout );
-  curl_setopt ( $ch, CURLOPT_SSL_VERIFYPEER, true);
-  curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+    $timeout = 10;
+    $ch = curl_init();
+    curl_setopt ( $ch, CURLOPT_URL, $url );
+    curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, 1 );
+    curl_setopt ( $ch, CURLOPT_TIMEOUT, $timeout );
+    curl_setopt ( $ch, CURLOPT_SSL_VERIFYPEER, true);
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
 
 
-  $http_respond = curl_exec($ch);
-  $http_respond = trim( strip_tags( $http_respond ) );
-  $http_code = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
-  if ( ( $http_code == "200" ) || ( $http_code == "302" ) ) {
-    return true;
-  } else {
-    // return $http_code;, possible too
-    return false;
-  }
-  curl_close( $ch );
+    $http_respond = curl_exec($ch);
+    $http_respond = trim( strip_tags( $http_respond ) );
+    $http_code = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
+    if ( ( $http_code == "200" ) || ( $http_code == "302" ) ) {
+        return true;
+    } else {
+        // return $http_code;, possible too
+        return false;
+    }
+    curl_close( $ch );
 }
 
 $testNames = array (
-  0 => 'acct_login/',
-  1 => 'acesso/',
-  2 => 'adimin/',
-  3 => 'adiministrador/',
-  4 => 'adm/',
-  5 => 'login/',
-  6 => 'adm/admin/',
-  7 => 'admin/',
-  8 => 'admin4_account/',
-  9 => 'admin4_colon/',
-  10 => 'admin/adm/',
-  11 => 'admin/admin/',
-  12 => 'admin/admin_login.php',
-  13 => 'admin_area/',
-  14 => 'admin.html',
-  15 => 'administer/',
-  16 => 'administracao/',
-  17 => 'administratoraccounts/',
-  18 => 'administrators/',
-  19 => 'admin.php',
-  20 => 'adminpro/',
-  21 => 'AdminTools/',
-  22 => 'autologin/',
-  23 => 'banneradmin/',
-  24 => 'bbadmin/',
-  25 => 'bigadmin/',
-  26 => 'blogindex/',
-  27 => 'cadmins/',
-  28 => 'ccp14admin/',
-  29 => 'cmsadmin/',
-  30 => 'config/',
-  31 => 'controle/',
-  32 => 'cpanel/',
-  33 => 'cpanel_file/',
-  34 => 'customer_login/',
-  35 => 'database_administration/',
-  36 => 'directadmin/',
-  37 => 'dir-login/',
-  38 => 'donos/',
-  39 => 'edit/',
-  40 => 'entrar',
-  41 => 'entrar.html',
-  42 => 'entrar.php',
-  43 => 'ezsqliteadmin/',
-  44 => 'formslogin/',
-  45 => 'funcoes/',
-  46 => 'globes_admin/',
-  47 => 'hpwebjetadmin/',
-  48 => 'Indy_admin/',
-  49 => 'irc-macadmin/',
-  50 => 'key/',
-  51 => 'LiveUser_Admin/',
-  52 => 'logar/',
-  53 => 'login.php',
-  54 => 'login/',
-  55 => 'login1/',
-  56 => 'login_db/',
-  57 => 'loginflat/',
-  58 => 'login.html',
-  59 => 'login.php',
-  60 => 'login-redirect/',
-  61 => 'login-us/',
-  62 => 'loginuser/',
-  63 => 'loginusuarios/',
-  64 => 'logo_sysadmin/',
-  65 => 'logout/',
-  66 => 'Lotus_Domino_Admin/',
-  67 => 'macadmin/',
-  68 => 'manuallogin/',
-  69 => 'members/',
-  70 => 'membros/',
-  71 => 'memlogin/',
-  72 => 'meta_login/',
-  73 => 'navSiteAdmin/',
-  74 => 'net/',
-  75 => 'newsadmin/',
-  76 => 'not/',
-  77 => 'openvpnadmin/',
-  78 => 'painel/',
-  79 => 'paineldecontrole/',
-  80 => 'panel/',
-  81 => 'pc/',
-  82 => 'pdc/',
-  83 => 'pgadmin/',
-  84 => 'php/',
-  85 => 'phpldapadmin/',
-  86 => 'phppgadmin/',
-  87 => 'phpSQLiteAdmin/',
-  88 => 'platz_login/',
-  89 => 'power_user/',
-  90 => 'project-admins/',
-  91 => 'pureadmin/',
-  92 => 'radmind/',
-  93 => 'radmind-1/',
-  94 => 'rcLogin/',
-  95 => 'saff/',
-  96 => 'senha/',
-  97 => 'senha/',
-  98 => 'senhas/',
-  99 => 'server/',
-  100 => 'ServerAdministrator/',
-  101 => 'server_admin_small/',
-  102 => 'sff/',
-  103 => 'showlogin/',
-  104 => 'simpleLogin/',
-  105 => 'sistema/',
-  106 => 'smblogin/',
-  107 => 'sql-admin/',
-  108 => 'sshadmin/',
-  109 => 'ss_vms_admin_sm/',
-  110 => 'staradmin/',
-  111 => 'sub-login/',
-  112 => 'Super-Admin/',
-  113 => 'support_login/',
-  114 => 'sys-admin/',
-  115 => 'SysAdmin/',
-  116 => 'SysAdmin2/',
-  117 => 'system_administration/',
-  118 => 'typo3/',
-  119 => 'userlogin/',
-  120 => 'UserLogin/',
-  121 => 'usuarios/',
-  122 => 'utility_login/',
-  123 => 'vadmind/',
-  124 => 'vmailadmin/',
-  125 => 'wizmysqladmin/',
-  126 => 'wp-login.php/',
-  127 => 'wp-admin/',
-  128 => 'xlogin/',
-  129 => 'dash/',
+    0 => 'login/',
+    1 => 'admin/',
+    2 => 'adimin/',
+    3 => 'adiministrador/',
+    4 => 'adm/',
+    5 => 'acct_login/',
+    6 => 'adm/admin/',
+    7 => 'acesso/',
+    8 => 'admin4_account/',
+    9 => 'admin4_colon/',
+    10 => 'admin/adm/',
+    11 => 'admin/admin/',
+    12 => 'admin/admin_login.php',
+    13 => 'admin_area/',
+    14 => 'admin.html',
+    15 => 'administer/',
+    16 => 'administracao/',
+    17 => 'administratoraccounts/',
+    18 => 'administrators/',
+    19 => 'admin.php',
+    20 => 'adminpro/',
+    21 => 'AdminTools/',
+    22 => 'autologin/',
+    23 => 'banneradmin/',
+    24 => 'bbadmin/',
+    25 => 'bigadmin/',
+    26 => 'blogindex/',
+    27 => 'cadmins/',
+    28 => 'ccp14admin/',
+    29 => 'cmsadmin/',
+    30 => 'config/',
+    31 => 'controle/',
+    32 => 'cpanel/',
+    33 => 'cpanel_file/',
+    34 => 'customer_login/',
+    35 => 'database_administration/',
+    36 => 'directadmin/',
+    37 => 'dir-login/',
+    38 => 'donos/',
+    39 => 'edit/',
+    40 => 'entrar',
+    41 => 'entrar.html',
+    42 => 'entrar.php',
+    43 => 'ezsqliteadmin/',
+    44 => 'formslogin/',
+    45 => 'funcoes/',
+    46 => 'globes_admin/',
+    47 => 'hpwebjetadmin/',
+    48 => 'Indy_admin/',
+    49 => 'irc-macadmin/',
+    50 => 'key/',
+    51 => 'LiveUser_Admin/',
+    52 => 'logar/',
+    53 => 'login.php',
+    54 => 'login/',
+    55 => 'login1/',
+    56 => 'login_db/',
+    57 => 'loginflat/',
+    58 => 'login.html',
+    59 => 'login.php',
+    60 => 'login-redirect/',
+    61 => 'login-us/',
+    62 => 'loginuser/',
+    63 => 'loginusuarios/',
+    64 => 'logo_sysadmin/',
+    65 => 'logout/',
+    66 => 'Lotus_Domino_Admin/',
+    67 => 'macadmin/',
+    68 => 'manuallogin/',
+    69 => 'members/',
+    70 => 'membros/',
+    71 => 'memlogin/',
+    72 => 'meta_login/',
+    73 => 'navSiteAdmin/',
+    74 => 'net/',
+    75 => 'newsadmin/',
+    76 => 'not/',
+    77 => 'openvpnadmin/',
+    78 => 'painel/',
+    79 => 'paineldecontrole/',
+    80 => 'panel/',
+    81 => 'pc/',
+    82 => 'pdc/',
+    83 => 'pgadmin/',
+    84 => 'php/',
+    85 => 'phpldapadmin/',
+    86 => 'phppgadmin/',
+    87 => 'phpSQLiteAdmin/',
+    88 => 'platz_login/',
+    89 => 'power_user/',
+    90 => 'project-admins/',
+    91 => 'pureadmin/',
+    92 => 'radmind/',
+    93 => 'radmind-1/',
+    94 => 'rcLogin/',
+    95 => 'saff/',
+    96 => 'senha/',
+    97 => 'senha/',
+    98 => 'senhas/',
+    99 => 'server/',
+    100 => 'ServerAdministrator/',
+    101 => 'server_admin_small/',
+    102 => 'sff/',
+    103 => 'showlogin/',
+    104 => 'simpleLogin/',
+    105 => 'sistema/',
+    106 => 'smblogin/',
+    107 => 'sql-admin/',
+    108 => 'sshadmin/',
+    109 => 'ss_vms_admin_sm/',
+    110 => 'staradmin/',
+    111 => 'sub-login/',
+    112 => 'Super-Admin/',
+    113 => 'support_login/',
+    114 => 'sys-admin/',
+    115 => 'SysAdmin/',
+    116 => 'SysAdmin2/',
+    117 => 'system_administration/',
+    118 => 'typo3/',
+    119 => 'userlogin/',
+    120 => 'UserLogin/',
+    121 => 'usuarios/',
+    122 => 'utility_login/',
+    123 => 'vadmind/',
+    124 => 'vmailadmin/',
+    125 => 'wizmysqladmin/',
+    126 => 'wp-login.php/',
+    127 => 'wp-admin/',
+    128 => 'xlogin/',
+    129 => 'dash/',
 );
 $names =  $testNames;
 foreach ($names as $key => $name) {
-  $my_url = $url.'/'.$name;
+    $my_url = $url.'/'.$name;
 
-  if (url_test($my_url)) {
-    echo "\033[7m".'[FOUND]:: ----------------------'."\n\n\n";
-    echo '[FOUND]:: <==> :: '. $my_url."\n\n\n";
-    echo '[FOUND]:: ----------------------'."\n\n\n"."\e[0m";
-  }else {
-   echo '['.($key+1).']'.'[not found]:: <> :: '. $my_url."\n\n\n";
-  }
+    if (url_test($my_url)) {
+        echo "\033[7m".'[FOUND]:: ---------------------- '."\n\n\n";
+        echo '[FOUND]:: <==> :: '. $my_url."\n\n\n";
+        echo '[FOUND]:: ----------------------'."\n\n\n"."\e[0m";
+
+        if(!isset($go)){
+            exit;
+        }
+    }else {
+        echo '['.($key+1).']'.'[not found]:: <> :: '. $my_url."\n\n\n";
+    }
 }
 
 ?>
